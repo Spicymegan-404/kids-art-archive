@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Artwork</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #fdf8f4;
+      --surface: #ffffff;
+      --border:  #e8ddd4;
+      --primary: #f4845f;
+      --text:    #3a2e27;
+      --muted:   #9e8878;
+      --radius:  14px;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Lang switcher ── */
+    .lang-switcher {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      display: flex;
+      align-items: center;
+      gap: .3rem;
+      z-index: 20;
+    }
+    .lang-btn {
+      background: rgba(255,255,255,.85);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: .22rem .52rem;
+      border-radius: 6px;
+      font-size: .78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color .15s;
+      backdrop-filter: blur(4px);
+    }
+    .lang-btn:hover,
+    .lang-btn.active { color: var(--primary); }
+    .lang-sep { color: var(--border); font-size: .85rem; }
+
+    /* ── Back link ── */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      font-size: .85rem;
+      color: var(--muted);
+      text-decoration: none;
+      margin-bottom: 1.4rem;
+      transition: color .15s;
+    }
+    .back-link:hover { color: var(--primary); }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 2.5rem 1.2rem 5rem;
+    }
+
+    /* ── Image ── */
+    .art-image-wrap {
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 6px 32px rgba(0,0,0,.10);
+      background: var(--border);
+      margin-bottom: 1.6rem;
+    }
+    .art-image-wrap img {
+      width: 100%;
+      display: block;
+      max-height: 72vh;
+      object-fit: contain;
+      background: var(--bg);
+    }
+
+    /* ── Info card ── */
+    .art-info {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.6rem 1.8rem;
+    }
+    .art-title {
+      font-size: clamp(1.4rem, 5vw, 2rem);
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Meta row ── */
+    .art-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem .9rem;
+      margin-bottom: .6rem;
+    }
+    .art-meta-item {
+      display: flex;
+      align-items: center;
+      gap: .3rem;
+      font-size: .88rem;
+      color: var(--muted);
+    }
+    .art-meta-value { font-weight: 600; color: var(--text); }
+
+    /* ── Story ── */
+    .art-divider {
+      border: none;
+      border-top: 1.5px solid var(--border);
+      margin: 1.2rem 0;
+    }
+    .art-story-label {
+      font-size: .75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--muted);
+      margin-bottom: .55rem;
+    }
+    .art-story {
+      font-size: .95rem;
+      line-height: 1.8;
+      white-space: pre-wrap;
+    }
+
+    /* ── Action buttons ── */
+    .art-actions {
+      display: flex;
+      gap: .7rem;
+      margin-top: 1.4rem;
+      flex-wrap: wrap;
+    }
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .55rem 1.1rem;
+      border-radius: 8px;
+      font-size: .85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      transition: border-color .15s, color .15s, background .15s;
+      text-decoration: none;
+    }
+    .btn-action:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: #fff5f2;
+    }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(4px);
+      background: #3a2e27;
+      color: #fff;
+      padding: .7rem 1.4rem;
+      border-radius: 10px;
+      font-size: .88rem;
+      font-weight: 500;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s, transform .25s;
+      white-space: nowrap;
+      z-index: 100;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ── Footer ── */
+    .art-footer {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: .78rem;
+      color: var(--muted);
+    }
+    .art-footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .art-footer a:hover { text-decoration: underline; }
+
+    /* ── Artwork navigation ── */
+    .art-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2rem;
+      gap: 1rem;
+    }
+    .art-nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .6rem 1.1rem;
+      border-radius: 8px;
+      font-size: .85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      text-decoration: none;
+      transition: border-color .15s, color .15s;
+    }
+    .art-nav-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .art-nav-btn.disabled {
+      opacity: .35;
+      pointer-events: none;
+    }
+    .art-nav-spacer { flex: 1; }
+
+    /* ── Not found ── */
+    .not-found {
+      text-align: center;
+      padding: 5rem 1rem;
+    }
+    .not-found h2 { font-size: 1.3rem; margin-bottom: .6rem; }
+    .not-found p  { color: var(--muted); font-size: .9rem; }
+
+    @media (max-width: 480px) {
+      .container { padding: 1.6rem .9rem 4rem; }
+      .art-info   { padding: 1.2rem 1.2rem; }
+      .art-nav-btn { font-size: .8rem; padding: .5rem .8rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="lang-switcher">
+    <button class="lang-btn" data-lang="en">EN</button>
+    <span class="lang-sep">|</span>
+    <button class="lang-btn" data-lang="zh">中文</button>
+  </div>
+
+  <div class="container" id="app"></div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="lang.js"></script>
+  <script>
+    'use strict';
+
+    let currentLang = localStorage.getItem('kids_art_lang') || 'en';
+    function t(key) { return (LANG[currentLang] || LANG['en'])[key] || LANG['en'][key] || key; }
+
+    function applyLangBtns() {
+      document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === currentLang);
+      });
+    }
+
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentLang = btn.dataset.lang;
+        localStorage.setItem('kids_art_lang', currentLang);
+        render();
+      });
+    });
+
+    /* ── Helpers ── */
+    function formatDate(dateStr) {
+      const [y, m, d] = dateStr.split('-').map(Number);
+      const locale = currentLang === 'zh' ? 'zh-CN' : 'en-US';
+      return new Date(y, m - 1, d).toLocaleDateString(locale, {
+        year: 'numeric', month: 'long', day: 'numeric',
+      });
+    }
+
+    function esc(str) {
+      return String(str)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function showToast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 2800);
+    }
+
+    /* ── Data ── */
+    function getAllDrawings() {
+      try {
+        return JSON.parse(localStorage.getItem('kids_art_gallery')) || [];
+      } catch { return []; }
+    }
+
+    function getCurrentId() {
+      return parseInt(new URLSearchParams(location.search).get('id')) || null;
+    }
+
+    function getDrawing() {
+      const id = getCurrentId();
+      if (!id) return null;
+      const list = getAllDrawings();
+      return list.find(d => d.id === id) || null;
+    }
+
+    /* ── Prev / Next ── */
+    function getAdjacentIds() {
+      const id = getCurrentId();
+      if (!id) return { prevId: null, nextId: null };
+      // Sort same as gallery: newest first by date
+      const list = getAllDrawings().slice().sort((a, b) => {
+        if (b.date !== a.date) return b.date.localeCompare(a.date);
+        return b.id - a.id;
+      });
+      const idx = list.findIndex(d => d.id === id);
+      return {
+        prevId: idx < list.length - 1 ? list[idx + 1].id : null,
+        nextId: idx > 0 ? list[idx - 1].id : null,
+      };
+    }
+
+    /* ── Actions ── */
+    function handleShare() {
+      navigator.clipboard.writeText(location.href).then(() => {
+        showToast(t('shareToast'));
+      }).catch(() => {
+        // Fallback: select input
+        const el = document.createElement('input');
+        el.value = location.href;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        showToast(t('shareToast'));
+      });
+    }
+
+    function handleDownload(d) {
+      const a = document.createElement('a');
+      a.href = d.imageUrl;
+      a.download = (d.title || 'artwork') + '.jpg';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    /* ── Render ── */
+    function render() {
+      applyLangBtns();
+      const d = getDrawing();
+      const app = document.getElementById('app');
+
+      if (!d) {
+        document.title = t('shareNotFound');
+        app.innerHTML = `
+          <div class="not-found">
+            <h2>${t('shareNotFound')}</h2>
+            <p><a class="back-link" href="index.html">← ${t('navHome')}</a></p>
+          </div>`;
+        return;
+      }
+
+      document.title = `${d.title} · ${t('siteTitle')}`;
+
+      // Meta items
+      const metas = [];
+      if (d.artist) metas.push(`
+        <div class="art-meta-item">
+          <span>🎨</span>
+          <span class="art-meta-value">${esc(d.artist)}</span>
+        </div>`);
+      if (d.age) metas.push(`
+        <div class="art-meta-item">
+          <span>🌱</span>
+          <span>${t('labelAge')}</span>
+          <span class="art-meta-value">${esc(d.age)}</span>
+        </div>`);
+      metas.push(`
+        <div class="art-meta-item">
+          <span>📅</span>
+          <span class="art-meta-value">${formatDate(d.date)}</span>
+        </div>`);
+
+      const storyHtml = d.story ? `
+        <hr class="art-divider" />
+        <div class="art-story-label">${t('labelStory')}</div>
+        <p class="art-story">${esc(d.story)}</p>` : '';
+
+      // Prev / Next
+      const { prevId, nextId } = getAdjacentIds();
+      const prevBtn = `<a class="art-nav-btn${prevId ? '' : ' disabled'}" ${prevId ? `href="art.html?id=${prevId}"` : ''}>${t('navPrevArt')}</a>`;
+      const nextBtn = `<a class="art-nav-btn${nextId ? '' : ' disabled'}" ${nextId ? `href="art.html?id=${nextId}"` : ''}>${t('navNextArt')}</a>`;
+
+      app.innerHTML = `
+        <a class="back-link" href="index.html">← ${t('navHome')}</a>
+        <div class="art-image-wrap">
+          <img src="${d.imageUrl}" alt="${esc(d.title)}" />
+        </div>
+        <div class="art-info">
+          <h1 class="art-title">${esc(d.title)}</h1>
+          <div class="art-meta">${metas.join('')}</div>
+          ${storyHtml}
+          <div class="art-actions">
+            <button class="btn-action" id="btn-share-link">${t('btnShareLink')}</button>
+            <button class="btn-action" id="btn-download-img">${t('btnDownloadImg')}</button>
+          </div>
+        </div>
+        <div class="art-nav">
+          ${prevBtn}
+          <span class="art-nav-spacer"></span>
+          ${nextBtn}
+        </div>
+        <p class="art-footer">
+          ${t('shareFooter')} <a href="index.html">${t('siteTitle')}</a>
+        </p>`;
+
+      document.getElementById('btn-share-link').addEventListener('click', handleShare);
+      document.getElementById('btn-download-img').addEventListener('click', () => handleDownload(d));
+    }
+
+    render();
+  </script>
+</body>
+</html>
