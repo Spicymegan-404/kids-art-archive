@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
+<head><link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f4a261">  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kids Art Growth Journal</title>
   <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
+
+  <body>
 
   <header>
     <div class="lang-switcher">
@@ -113,5 +113,10 @@
 
   <script src="lang.js"></script>
   <script src="app.js"></script>
-</body>
+    <script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+  </body>
 </html>
