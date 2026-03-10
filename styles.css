@@ -649,3 +649,13 @@ a.tab-btn { text-decoration: none; display: inline-block; }
   transition: border-color .15s, color .15s;
 }
 .btn-insights-sm:hover { border-color: var(--primary); color: var(--primary); }
+#share-art-btn{
+margin-top:12px;
+background:#f4a261;
+color:white;
+border:none;
+padding:10px 16px;
+border-radius:10px;
+cursor:pointer;
+font-size:14px;
+}
