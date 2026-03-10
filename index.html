@@ -1,282 +1,117 @@
 <!DOCTYPE html>
-<!-- rebuild -->
-<html lang="zh">
+<html lang="en">
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>儿童艺术成长档案</title>
-
-<link rel="stylesheet" href="styles.css">
-
-<script src="lang.js"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-<style>
-
-.section{
-display:none;
-}
-
-.section.active{
-display:block;
-}
-
-.tab{
-cursor:pointer;
-}
-
-.tab.active{
-color:#e7744a;
-border-bottom:3px solid #e7744a;
-}
-
-</style>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kids Art Growth Journal</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
 
-<header class="hero">
-
-<h1>🎨 <span data-i18n="siteTitle">儿童艺术成长档案</span></h1>
-<p data-i18n="siteSubtitle">记录孩子每一次创作的闪光</p>
-
-<div class="lang-switcher">
-
-<button class="lang-btn" data-lang="en">EN</button> <button class="lang-btn" data-lang="zh">中文</button>
-
-</div>
-
-</header>
-
-<nav class="tabs">
-
-<span class="tab active" onclick="showTab('record')" data-i18n="navRecord">
-创作记录
-</span>
-
-<span class="tab" onclick="showTab('year')" data-i18n="navYear">
-年度合集
-</span>
-
-<span class="tab" onclick="showTab('portfolio')" data-i18n="navPortfolio">
-作品集
-</span>
-
-</nav>
-
-<main>
-
-<div id="record" class="section active">
-
-<div class="card">
-
-<h2 data-i18n="uploadTitle">上传孩子的新作品</h2>
-
-<form id="art-form">
-
-<label data-i18n="labelTitle">作品名称</label> <input id="title" required>
-
-<label data-i18n="labelArtist">创作者</label> <input id="artist">
-
-<label data-i18n="labelAge">年龄</label> <input id="age">
-
-<label data-i18n="labelStory">作品故事</label>
-
-<textarea id="story"></textarea>
-
-<label data-i18n="labelDate">创作日期</label> <input type="date" id="date">
-
-<label data-i18n="labelImage">上传图片</label> <input type="file" id="image" accept="image/*">
-
-<button type="submit" class="btn-primary" data-i18n="btnSave">
-保存作品
-</button>
-
-</form>
-
-</div>
-
-</div>
-
-<div id="year" class="section">
-
-<div class="card">
-
-<h2 data-i18n="navYear">年度合集</h2>
-
-<div id="year-list"></div>
-
-</div>
-
-</div>
-
-<div id="portfolio" class="section">
-
-<div class="toolbar">
-
-<button onclick="exportData()" class="btn-outline">
-📦 <span data-i18n="btnExport">导出作品数据</span>
-</button>
-
-<button onclick="importData()" class="btn-outline">
-📥 <span data-i18n="btnImport">导入作品数据</span>
-</button>
-
-<button onclick="downloadPDF()" class="btn-primary">
-<span data-i18n="btnDownloadPDF">下载 PDF</span>
-</button>
-
-</div>
-
-<div id="portfolio-grid"></div>
-
-</div>
-
-</main>
-
-<input type="file" id="import-file" style="display:none" accept=".json">
-
-<script>
-
-function showTab(id){
-
-document.querySelectorAll(".section").forEach(s=>{
-s.classList.remove("active")
-})
-
-document.getElementById(id).classList.add("active")
-
-document.querySelectorAll(".tab").forEach(t=>{
-t.classList.remove("active")
-})
-
-event.target.classList.add("active")
-
-}
-
-function getDrawings(){
-
-try{
-return JSON.parse(localStorage.getItem("kids_art_gallery"))||[]
-}catch{
-return[]
-}
-
-}
-
-function renderPortfolio(){
-
-const data=getDrawings()
-
-const root=document.getElementById("portfolio-grid")
-
-if(!data.length){
-
-root.innerHTML="<p style='text-align:center;color:#999'>No artworks yet</p>"
-return
-
-}
-
-root.innerHTML=data.map((d,i)=>`
-
-<div class="art-card">
-
-<img src="${d.imageUrl}" class="art-img">
-
-<h3>${d.title}</h3>
-
-<p>${d.date}</p>
-
-<button onclick="share(${i})">Share</button>
-<button onclick="poster(${i})">Poster</button>
-
-</div>
-
-`).join("")
-
-}
-
-function share(i){
-
-const url=\`\${location.origin}/art.html?id=\${i}\`
-
-if(navigator.share){
-
-navigator.share({
-title:"Kids Art",
-url:url
-})
-
-}else{
-
-navigator.clipboard.writeText(url)
-alert("Link copied")
-
-}
-
-}
-
-function poster(i){
-
-location.href=\`art.html?id=\${i}&poster=1\`
-
-}
-
-function exportData(){
-
-const data=getDrawings()
-
-const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"})
-
-const a=document.createElement("a")
-
-a.href=URL.createObjectURL(blob)
-
-a.download="kids-art-backup.json"
-
-a.click()
-
-}
-
-function importData(){
-
-document.getElementById("import-file").click()
-
-}
-
-document.getElementById("import-file").onchange=e=>{
-
-const file=e.target.files[0]
-
-const reader=new FileReader()
-
-reader.onload=function(){
-
-localStorage.setItem("kids_art_gallery",reader.result)
-
-location.reload()
-
-}
-
-reader.readAsText(file)
-
-}
-
-function downloadPDF(){
-
-const element=document.getElementById("portfolio")
-
-html2pdf().from(element).save("kids-art-portfolio.pdf")
-
-}
-
-renderPortfolio()
-
-</script>
-
+  <header>
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <span class="lang-sep">|</span>
+      <button class="lang-btn" data-lang="zh">中文</button>
+    </div>
+    <h1 data-i18n="siteTitle">🎨 Kids Art Gallery</h1>
+    <p class="subtitle" data-i18n="subtitle">A timeline of wonderful creations</p>
+  </header>
+
+  <!-- Tab navigation -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-view="home" data-i18n="navHome">Home</button>
+    <button class="tab-btn" data-view="yearly" data-i18n="navYearly">Yearly Collection</button>
+    <a class="tab-btn" href="portfolio.html" data-i18n="navPortfolio">Portfolio PDF</a>
+  </nav>
+
+  <main>
+
+    <!-- ── Home view ── -->
+    <div id="view-home">
+
+      <section class="upload-section">
+        <h2 data-i18n="uploadHeading">Add a New Drawing</h2>
+        <form id="upload-form">
+          <div class="form-group">
+            <label for="drawing-title" data-i18n="labelTitle">Title</label>
+            <input type="text" id="drawing-title"
+              data-i18n-placeholder="placeholderTitle"
+              placeholder="What did you draw?" required />
+          </div>
+          <div class="form-group">
+            <label for="drawing-artist" data-i18n="labelArtist">Artist</label>
+            <input type="text" id="drawing-artist"
+              data-i18n-placeholder="placeholderArtist"
+              placeholder="Who made this?" />
+          </div>
+          <div class="form-group">
+            <label for="drawing-age" data-i18n="labelAge">Age</label>
+            <input type="text" id="drawing-age"
+              data-i18n-placeholder="placeholderAge"
+              placeholder="e.g. 6, 5.5, 6y 3m" />
+          </div>
+          <div class="form-group">
+            <label for="drawing-story" data-i18n="labelStory">Artwork Story</label>
+            <textarea id="drawing-story" rows="3"
+              data-i18n-placeholder="placeholderStory"
+              placeholder="What inspired this drawing?"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="drawing-date" data-i18n="labelDate">Date</label>
+            <input type="date" id="drawing-date" required />
+          </div>
+          <div class="form-group">
+            <label for="drawing-image" class="file-label">
+              <div class="file-drop-zone" id="drop-zone">
+                <span class="drop-icon">📁</span>
+                <span id="file-label-text" data-i18n="dropZone">Click or drag to upload image</span>
+              </div>
+            </label>
+            <input type="file" id="drawing-image" accept="image/*" required />
+          </div>
+          <div id="image-preview-wrap" class="hidden">
+            <img id="image-preview" src="" alt="Preview" />
+          </div>
+          <button type="submit" class="btn-add" data-i18n="btnAdd">Add to Gallery</button>
+        </form>
+      </section>
+
+      <section class="gallery-section">
+        <h2 data-i18n="galleryHeading">Gallery</h2>
+        <div id="empty-state" class="empty-state">
+          <span data-i18n="emptyState">No drawings yet — add the first one above!</span>
+        </div>
+        <div id="gallery" class="gallery"></div>
+      </section>
+
+    </div><!-- /view-home -->
+
+    <!-- ── Yearly Collection view ── -->
+    <div id="view-yearly" class="hidden">
+      <section class="yearly-section-wrapper">
+        <h2 data-i18n="yearlyHeading">Yearly Collection</h2>
+        <div id="yearly-content"></div>
+      </section>
+    </div><!-- /view-yearly -->
+
+  </main>
+
+  <!-- Lightbox -->
+  <div id="lightbox" class="lightbox hidden">
+    <button class="lightbox-close" id="lightbox-close">✕</button>
+    <div class="lightbox-content">
+      <img id="lightbox-img" src="" alt="" />
+      <div class="lightbox-info">
+        <h3 id="lightbox-title"></h3>
+        <p id="lightbox-artist"></p>
+        <p id="lightbox-date"></p>
+        <p id="lightbox-story" class="lightbox-story hidden"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="lang.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
