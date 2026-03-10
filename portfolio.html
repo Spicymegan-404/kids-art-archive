@@ -3,294 +3,313 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Art Growth Portfolio</title>
+<title>Art Portfolio</title>
 
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-
-:root{
---bg:#fdf8f4;
---surface:#ffffff;
---border:#e8ddd4;
---primary:#f4845f;
---text:#3a2e27;
---muted:#9e8878;
---radius:14px;
-}
 
 body{
-font-family:'Segoe UI',system-ui,sans-serif;
-background:var(--bg);
-color:var(--text);
-min-height:100vh;
+font-family:system-ui;
+margin:0;
+background:#fdf8f4;
 }
 
-/* 修复电脑居中 + 手机PDF裁切 */
-#pdf-root{
-max-width:800px;
-width:100%;
-margin:0 auto;
-}
-
-/* 控制栏 */
 .controls{
-position:sticky;
-top:0;
-z-index:20;
-background:rgba(253,248,244,.92);
-backdrop-filter:blur(6px);
-border-bottom:1.5px solid var(--border);
 display:flex;
-align-items:center;
 justify-content:space-between;
-gap:1rem;
-padding:.7rem 1.4rem;
-}
-
-.controls-left{display:flex;align-items:center;gap:.9rem;}
-.controls-right{display:flex;align-items:center;gap:.8rem;}
-
-.page-heading{
-font-size:1rem;
-font-weight:700;
-}
-
-.lang-switcher{display:flex;align-items:center;gap:.3rem;}
-
-.lang-btn{
-background:none;
-border:1px solid var(--border);
-color:var(--muted);
-padding:.22rem .52rem;
-border-radius:6px;
-font-size:.78rem;
-font-weight:600;
-cursor:pointer;
-}
-
-.lang-btn.active{color:var(--primary);}
-
-.btn-download{
-background:var(--primary);
-color:#fff;
-border:none;
-border-radius:8px;
-padding:.5rem 1.2rem;
-font-size:.88rem;
-font-weight:700;
-cursor:pointer;
-}
-
-.btn-outline{
-background:none;
-border:1.5px solid var(--border);
-border-radius:8px;
-padding:.48rem 1rem;
-font-size:.85rem;
-font-weight:600;
-cursor:pointer;
-}
-
-/* 主容器 */
-.container{
-max-width:780px;
-margin:0 auto;
-padding:2rem 1.2rem 5rem;
-}
-
-/* 封面 */
-.pdf-cover{
-display:flex;
-flex-direction:column;
 align-items:center;
-justify-content:center;
-min-height:60vh;
-padding:3rem 2rem;
-margin-bottom:3rem;
-text-align:center;
-border:2.5px solid var(--border);
-border-radius:20px;
-background:var(--surface);
-page-break-after:always;
+padding:14px 20px;
+border-bottom:1px solid #eee;
+background:white;
 }
 
-.cover-title{
-font-size:2.2rem;
-font-weight:900;
-margin-bottom:.6rem;
+.controls-left{
+display:flex;
+gap:12px;
+align-items:center;
 }
 
-.cover-subtitle{
-color:var(--muted);
-margin-bottom:2rem;
+.controls-right{
+display:flex;
+gap:10px;
 }
 
-/* 年份 */
-.year-section{margin-bottom:3rem;}
-
-.year-heading{
-font-size:1.4rem;
-font-weight:800;
-margin-bottom:1.2rem;
-padding-bottom:.5rem;
-border-bottom:2px solid var(--border);
+.container{
+max-width:900px;
+margin:auto;
+padding:30px 20px;
 }
 
-/* 网格 */
 .art-grid{
 display:grid;
 grid-template-columns:repeat(2,1fr);
-gap:1.4rem;
+gap:20px;
 }
 
-@media(max-width:520px){
-.art-grid{grid-template-columns:1fr;}
+@media(max-width:600px){
+.art-grid{
+grid-template-columns:1fr;
+}
 }
 
-/* 卡片 */
 .art-card{
-background:var(--surface);
-border:1.5px solid var(--border);
-border-radius:var(--radius);
+background:white;
+border-radius:12px;
 overflow:hidden;
-page-break-inside:avoid;
+border:1px solid #eee;
 }
 
-.art-card-img{
+.art-card img{
 width:100%;
 aspect-ratio:4/3;
 object-fit:cover;
-display:block;
 }
 
 .art-card-body{
-padding:.9rem 1rem;
+padding:10px;
 }
 
-.art-card-title{
+.title{
 font-weight:700;
-margin-bottom:.5rem;
+margin-bottom:4px;
 }
 
-.art-card-story{
-font-size:.8rem;
-margin-top:.6rem;
-padding-top:.6rem;
-border-top:1px solid var(--border);
+.meta{
+font-size:13px;
+color:#666;
 }
 
-/* PDF footer */
-.pdf-footer{
-text-align:center;
-margin-top:3rem;
-font-size:.78rem;
-color:var(--muted);
-border-top:1.5px solid var(--border);
-padding-top:1rem;
+.btn{
+margin-top:8px;
+border:none;
+padding:6px 10px;
+border-radius:6px;
+cursor:pointer;
+font-size:13px;
 }
 
-@media print{
-.controls{display:none!important;}
-body{background:#fff;}
+.share{
+background:#f4845f;
+color:white;
 }
+
+.poster{
+background:#333;
+color:white;
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- 控制栏 -->
 <div class="controls">
 
 <div class="controls-left">
-<span class="page-heading">Art Growth Portfolio</span>
+
+<a href="index.html">← Home</a>
+
+<b>Art Portfolio</b>
+
 </div>
 
 <div class="controls-right">
 
-<div class="lang-switcher">
-<button class="lang-btn active">EN</button>
-<button class="lang-btn">中文</button>
-</div>
+<button id="btn-export">Export</button>
 
-<button class="btn-outline" id="btn-export">📦 Export Data</button>
-<button class="btn-outline" id="btn-import">📥 Import Data</button>
-<button class="btn-download" id="btn-download">Download PDF</button>
+<button id="btn-import">Import</button>
+
+<button id="btn-download">PDF</button>
 
 </div>
+
 </div>
 
-<input type="file" id="import-file" accept=".json" style="display:none"/>
+<input type="file" id="import-file" accept=".json" style="display:none">
 
-<!-- 作品区域 -->
-<div class="container" id="pdf-root"></div>
+<div class="container">
 
-<script src="lang.js"></script>
+<div id="gallery"></div>
+
+</div>
 
 <script>
-'use strict';
 
 function getDrawings(){
-try{return JSON.parse(localStorage.getItem('kids_art_gallery'))||[];}
-catch{return[];}
+try{
+return JSON.parse(localStorage.getItem("kids_art_gallery"))||[]
+}catch{
+return[]
+}
 }
 
 function render(){
 
-const root=document.getElementById('pdf-root');
-const drawings=getDrawings();
+const gallery=document.getElementById("gallery")
+
+const drawings=getDrawings()
 
 if(drawings.length===0){
-root.innerHTML="<div style='text-align:center;padding:4rem;color:#999'>No artworks yet</div>";
-return;
+gallery.innerHTML="<p>No artworks yet</p>"
+return
 }
 
-let html=`<div class="pdf-cover">
-<div class="cover-title">Children's Art Portfolio</div>
-<div class="cover-subtitle">Little Artist Collection</div>
-</div>`;
+let html=`<div class="art-grid">`
 
-drawings.forEach(d=>{
+drawings.forEach((d,i)=>{
+
 html+=`
+
 <div class="art-card">
-<img class="art-card-img" src="${d.imageUrl}">
+
+<img src="${d.imageUrl}">
+
 <div class="art-card-body">
-<div class="art-card-title">${d.title||''}</div>
-<div>${d.date||''}</div>
-<div class="art-card-story">${d.story||''}</div>
+
+<div class="title">${d.title||""}</div>
+
+<div class="meta">${d.date||""}</div>
+
+<button class="btn share" onclick="share(${i})">
+Share
+</button>
+
+<button class="btn poster" onclick="poster(${i})">
+Poster
+</button>
+
 </div>
-</div>`;
-});
 
-html+=`<div class="pdf-footer">Generated by Kids Art Archive</div>`;
+</div>
 
-root.innerHTML=html;
+`
+
+})
+
+html+=`</div>`
+
+gallery.innerHTML=html
 
 }
 
-document.getElementById('btn-download').addEventListener('click',async()=>{
+render()
+
+function share(i){
+
+const url=`${location.origin}/art.html?id=${i}`
+
+navigator.clipboard.writeText(url)
+
+alert("Share link copied:\n"+url)
+
+}
+
+function poster(i){
+
+const drawings=getDrawings()
+const d=drawings[i]
+
+const canvas=document.createElement("canvas")
+
+canvas.width=800
+canvas.height=1000
+
+const ctx=canvas.getContext("2d")
+
+const img=new Image()
+img.crossOrigin="anonymous"
+img.src=d.imageUrl
+
+img.onload=function(){
+
+ctx.fillStyle="#ffffff"
+ctx.fillRect(0,0,800,1000)
+
+ctx.drawImage(img,50,80,700,520)
+
+ctx.fillStyle="#000"
+
+ctx.font="bold 36px system-ui"
+ctx.fillText(d.title||"",50,650)
+
+ctx.font="22px system-ui"
+ctx.fillText(d.date||"",50,690)
+
+ctx.font="20px system-ui"
+ctx.fillText("Kids Art Archive",50,940)
+
+const url=canvas.toDataURL()
+
+const a=document.createElement("a")
+a.href=url
+a.download="art-poster.png"
+
+a.click()
+
+}
+
+}
+
+document.getElementById("btn-export").onclick=()=>{
+
+const data=getDrawings()
+
+const blob=new Blob([JSON.stringify(data,null,2)])
+
+const a=document.createElement("a")
+a.href=URL.createObjectURL(blob)
+a.download="kids-art-backup.json"
+
+a.click()
+
+}
+
+document.getElementById("btn-import").onclick=()=>{
+document.getElementById("import-file").click()
+}
+
+document.getElementById("import-file").addEventListener("change",e=>{
+
+const file=e.target.files[0]
+
+const reader=new FileReader()
+
+reader.onload=function(){
+
+localStorage.setItem("kids_art_gallery",reader.result)
+
+location.reload()
+
+}
+
+reader.readAsText(file)
+
+})
+
+document.getElementById("btn-download").onclick=async()=>{
 
 if(!window.html2pdf){
-const s=document.createElement('script');
-s.src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
-document.head.appendChild(s);
-await new Promise(r=>s.onload=r);
+
+const s=document.createElement("script")
+s.src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+
+document.head.appendChild(s)
+
+await new Promise(r=>s.onload=r)
+
 }
 
-const element=document.getElementById("pdf-root");
+html2pdf().set({
 
-const opt={
 margin:10,
 filename:"portfolio.pdf",
 image:{type:"jpeg",quality:0.95},
-html2canvas:{scale:2,useCORS:true},
-jsPDF:{unit:"mm",format:"a4",orientation:"portrait"}
-};
+html2canvas:{scale:2},
+jsPDF:{unit:"mm",format:"a4"}
 
-html2pdf().set(opt).from(element).save();
+}).from(document.body).save()
 
-});
+}
 
-render();
 </script>
 
 </body>
