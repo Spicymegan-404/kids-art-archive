@@ -312,7 +312,8 @@
 </head>
 <body>
 
-  <!-- Controls bar (not included in PDF) -->
+  <button id="generate-pdf-btn">Download Portfolio PDF</button>  <!-- Controls bar (not included in PDF) -->
+  
   <div class="controls" id="controls">
     <div class="controls-left">
       <a class="back-link" href="index.html">← <span data-i18n="navHome">Home</span></a>
@@ -576,5 +577,6 @@
     /* ── Init ── */
     render();
   </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </body>
 </html>
