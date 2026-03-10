@@ -7,8 +7,23 @@
   <link rel="stylesheet" href="styles.css" />
 
   <body>
-
-  <header>
+<div id="ios-install-tip" style="
+display:none;
+position:fixed;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+background:#f4a261;
+color:white;
+padding:12px 18px;
+border-radius:20px;
+font-size:14px;
+z-index:9999;
+box-shadow:0 4px 10px rgba(0,0,0,0.2);
+">
+📱 点击 Safari 分享按钮 → 添加到主屏幕
+</div> 
+    <header>
     <div class="lang-switcher">
       <button class="lang-btn active" data-lang="en">EN</button>
       <span class="lang-sep">|</span>
@@ -116,6 +131,21 @@
     <script>
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+<script>
+function isIos() {
+  return /iphone|ipad|ipod/i.test(navigator.userAgent);
+}
+
+function isInStandaloneMode() {
+  return ('standalone' in window.navigator) && window.navigator.standalone;
+}
+
+if (isIos() && !isInStandaloneMode()) {
+  setTimeout(function () {
+    document.getElementById("ios-install-tip").style.display = "block";
+  }, 3000);
 }
 </script>
   </body>
