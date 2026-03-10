@@ -23,11 +23,13 @@
       color: var(--text);
       min-height: 100vh;
     }
-/* PDF layout fix */
-#pdf-root {
-  max-width: 800px;
+    /* desktop + pdf layout fix */
+#pdf-root{
+  width: 800px;
+  max-width: 95%;
   margin: 0 auto;
-}   
+}
+
     /* ── Controls bar (hidden in PDF) ── */
     .controls {
       position: sticky;
@@ -315,9 +317,9 @@
   </style>
 </head>
 <body>
-
-  <button id="generate-pdf-btn">Download Portfolio PDF</button>  <!-- Controls bar (not included in PDF) -->
-  
+ <button id="generate-pdf-btn">Download Portfolio PDF</button> 
+  <div id="pdf-root"> 
+  <!-- Controls bar (not included in PDF) -->
   <div class="controls" id="controls">
     <div class="controls-left">
       <a class="back-link" href="index.html">← <span data-i18n="navHome">Home</span></a>
@@ -582,5 +584,6 @@
     render();
   </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</div>
 </body>
 </html>
