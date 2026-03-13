@@ -245,10 +245,31 @@ input[type="file"] { display: none; }
 .btn-add:active { transform: scale(.98); }
 .save-confirmation {
   margin-top: .7rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 104px;
+  padding: .55rem .9rem;
   font-size: .9rem;
   font-weight: 700;
   color: #2e8b57;
   text-align: center;
+  background: #eefaf3;
+  border: 1px solid #bfe4cc;
+  border-radius: 999px;
+  box-shadow: 0 8px 18px rgba(46, 139, 87, .08);
+  animation: saveNoticeIn .18s ease-out;
+}
+
+@keyframes saveNoticeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ── Gallery ── */
@@ -1605,6 +1626,110 @@ body.year-book-mode .art-card-img {
   padding: 4rem 1rem;
 }
 
+.ios-home-hint {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  z-index: 260;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255, 252, 248, .97);
+  border: 1.5px solid rgba(221, 205, 190, .95);
+  box-shadow: 0 16px 34px rgba(58, 46, 39, .14);
+  backdrop-filter: blur(12px);
+}
+
+.ios-home-hint-icon {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1.5px solid var(--border);
+}
+
+.ios-home-hint-icon::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 7px;
+  height: 12px;
+  border: 2px solid var(--primary-dark);
+  border-top: none;
+  border-radius: 0 0 5px 5px;
+}
+
+.ios-home-hint-icon::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 5px;
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid var(--primary-dark);
+  border-right: 2px solid var(--primary-dark);
+  transform: translateX(-50%) rotate(-45deg);
+}
+
+.ios-home-hint-icon span {
+  position: absolute;
+  left: 50%;
+  top: 8px;
+  width: 2px;
+  height: 12px;
+  background: var(--primary-dark);
+  transform: translateX(-50%);
+  border-radius: 99px;
+}
+
+.ios-home-hint-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.ios-home-hint-title {
+  font-size: .92rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.ios-home-hint-text {
+  font-size: .82rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.ios-home-hint-close {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  cursor: pointer;
+  flex: 0 0 30px;
+}
+
+.ios-home-hint-action {
+  border: none;
+  background: var(--primary);
+  color: #fff;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: .86rem;
+  font-weight: 800;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
 @media (max-width: 640px) {
   .share-container {
     padding: 1.5rem .9rem 3rem;
@@ -1638,6 +1763,15 @@ body.year-book-mode .art-card-img {
 
   .timeline-item-thumb {
     width: 100%;
+  }
+
+  .ios-home-hint {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .ios-home-hint-copy {
+    min-width: calc(100% - 46px);
   }
 }
 .btn-api-save:hover { background: var(--primary-dark); }

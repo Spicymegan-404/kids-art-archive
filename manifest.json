@@ -1,7 +1,9 @@
 {
   "name": "Kids Art Growth Journal",
   "short_name": "Kids Art",
-  "start_url": "index.html",
+  "id": "./index.html",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#f4a261",
   "theme_color": "#f4a261",
@@ -9,12 +11,14 @@
     {
       "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
