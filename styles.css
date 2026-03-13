@@ -181,6 +181,7 @@ label {
 }
 
 input[type="text"],
+input[type="number"],
 input[type="date"],
 textarea {
   width: 100%;
@@ -198,10 +199,22 @@ textarea {
   line-height: 1.5;
 }
 input[type="text"]:focus,
+input[type="number"]:focus,
 input[type="date"]:focus,
 textarea:focus {
   outline: none;
   border-color: var(--primary);
+}
+input[type="date"] {
+  -webkit-appearance: none;
+  appearance: none;
+  text-align: left;
+}
+input[type="date"]::-webkit-date-and-time-value {
+  text-align: left;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: .92;
 }
 
 /* File input hidden; click the drop zone */
@@ -599,6 +612,13 @@ a.tab-btn { text-decoration: none; display: inline-block; }
   padding: .5rem .6rem .6rem;
 }
 .year-thumb-title  { font-weight: 700; font-size: .85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.year-thumb-artist,
+.year-thumb-age {
+  display: flex;
+  align-items: flex-start;
+  gap: .3rem;
+  line-height: 1.25;
+}
 .year-thumb-artist { font-size: .75rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .year-thumb-age    { font-size: .75rem; color: var(--primary); font-weight: 600; }
 .year-thumb-date   { font-size: .72rem; color: var(--muted); margin-top: .2rem; }

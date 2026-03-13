@@ -14,6 +14,15 @@ function fmtCount(n) {
   return n === 1 ? '1 drawing' : `${n} drawings`;
 }
 
+function normalizeAge(value) {
+  const raw = String(value ?? '').trim();
+  if (!raw) return '';
+  if (!/^\d+$/.test(raw)) return '';
+  const age = Number(raw);
+  if (!Number.isInteger(age) || age < 1 || age > 100) return '';
+  return String(age);
+}
+
 function applyLang() {
   document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
   document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -159,13 +168,19 @@ dropZone.addEventListener('drop', e => {
 form.addEventListener('submit', e => {
   e.preventDefault();
   if (!selectedFile) { alert(t('alertNoImage')); return; }
+  const normalizedAge = normalizeAge(ageInput.value);
+  if (ageInput.value.trim() && !normalizedAge) {
+    alert(currentLang === 'zh' ? '年龄只能填写 1 到 100 的整数。' : 'Age must be an integer between 1 and 100.');
+    ageInput.focus();
+    return;
+  }
   const reader = new FileReader();
   reader.onload = ev => {
     const drawing = {
       id:       Date.now(),
       title:    titleInput.value.trim(),
       artist:   artistInput.value.trim(),
-      age:      ageInput.value.trim(),
+      age:      normalizedAge,
       story:    storyInput.value.trim(),
       date:     dateInput.value,
       imageUrl: ev.target.result,
@@ -220,6 +235,7 @@ function renderGallery() {
 
   let lastYear = null;
   drawings.forEach(d => {
+    const safeAge = normalizeAge(d.age);
     const year = getYear(d);
     if (year !== lastYear) {
       lastYear = year;
@@ -240,7 +256,7 @@ function renderGallery() {
         <div class="card-info">
           <div class="card-title">${escHtml(d.title)}</div>
           ${d.artist ? `<div class="card-artist">👩‍🎨 ${escHtml(d.artist)}</div>` : ''}
-          ${d.age ? `<div class="card-artist">🌱 ${escHtml(d.age)}</div>` : ''}
+          ${safeAge ? `<div class="card-artist">🌱 ${escHtml(safeAge)}</div>` : ''}
           <div class="card-date">📅 ${formatDate(d.date)}</div>
           ${d.story ? `<div class="card-story">${escHtml(d.story)}</div>` : ''}
         </div>
@@ -305,6 +321,7 @@ function renderYearly() {
     const grid = document.createElement('div');
     grid.className = 'year-grid';
     items.forEach(d => {
+      const safeAge = normalizeAge(d.age);
       const card = document.createElement('div');
       card.className = 'year-thumb-card';
       card.innerHTML = `
@@ -314,7 +331,7 @@ function renderYearly() {
         <div class="year-thumb-info">
           <div class="year-thumb-title">${escHtml(d.title)}</div>
           ${d.artist ? `<div class="year-thumb-artist">👩‍🎨 ${escHtml(d.artist)}</div>` : ''}
-          ${d.age ? `<div class="year-thumb-age">🌱 ${escHtml(d.age)}</div>` : ''}
+          ${safeAge ? `<div class="year-thumb-age">🌱 ${escHtml(safeAge)}</div>` : ''}
           <div class="year-thumb-date">📅 ${formatDate(d.date)}</div>
         </div>`;
       card.addEventListener('click', () => {
@@ -331,10 +348,11 @@ function renderYearly() {
 
 // ── Lightbox ──────────────────────────────────────────────────────────────────
 function openLightbox(d) {
+  const safeAge = normalizeAge(d.age);
   lbImg.src            = d.imageUrl;
   lbTitle.textContent  = d.title;
   lbArtist.textContent = d.artist ? `👩‍🎨 ${d.artist}` : '';
-  lbDate.textContent   = (d.age ? `🌱 ${d.age}  ·  ` : '') + `📅 ${formatDate(d.date)}`;
+  lbDate.textContent   = (safeAge ? `🌱 ${safeAge}  ·  ` : '') + `📅 ${formatDate(d.date)}`;
   lbStory.textContent  = d.story || '';
   lbStory.classList.toggle('hidden', !d.story);
   lightbox.classList.remove('hidden');
