@@ -10,6 +10,7 @@
   const currentLang = localStorage.getItem('kids_art_lang') || 'en';
   let deferredPrompt = null;
   let activeBanner = null;
+  let androidBannerShown = false;
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
@@ -47,6 +48,44 @@
     activeBanner = banner;
   }
 
+  function showAndroidBanner(forceFallback = false) {
+    if (androidBannerShown || isStandalone || sessionStorage.getItem('kids_art_android_hint_dismissed') === '1') {
+      return;
+    }
+
+    androidBannerShown = true;
+    const canInstallDirectly = Boolean(deferredPrompt) && !forceFallback;
+    const copy = currentLang === 'zh'
+      ? {
+          title: '安装到手机桌面',
+          body: canInstallDirectly
+            ? '点“安装”即可把这个作品站添加到安卓手机桌面。'
+            : '可将这个作品站添加到桌面。如果没有弹出安装框，请点浏览器右上角菜单，再选“安装应用”或“添加到主屏幕”。',
+          close: '关闭提醒',
+          dismissKey: 'kids_art_android_hint_dismissed',
+        }
+      : {
+          title: 'Install App',
+          body: canInstallDirectly
+            ? 'Tap Install to add this art archive to your Android home screen.'
+            : 'You can add this art archive to your home screen. If no install sheet appears, open the browser menu and choose “Install app” or “Add to Home screen”.',
+          close: 'Dismiss hint',
+          dismissKey: 'kids_art_android_hint_dismissed',
+        };
+
+    const actionLabel = canInstallDirectly ? (currentLang === 'zh' ? '安装' : 'Install') : '';
+    createBanner(copy, actionLabel, async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      try {
+        await deferredPrompt.userChoice;
+      } catch {}
+      deferredPrompt = null;
+      activeBanner?.remove();
+      activeBanner = null;
+    });
+  }
+
   if (isIos && isSafari && !isStandalone && sessionStorage.getItem('kids_art_ios_hint_dismissed') !== '1') {
     const copy = currentLang === 'zh'
       ? {
@@ -68,34 +107,13 @@
     window.addEventListener('beforeinstallprompt', event => {
       event.preventDefault();
       deferredPrompt = event;
-
-      if (sessionStorage.getItem('kids_art_android_hint_dismissed') === '1') return;
-
-      const copy = currentLang === 'zh'
-        ? {
-            title: '安装到手机桌面',
-            body: '点“安装”即可把这个作品站添加到安卓手机桌面。',
-            close: '关闭提醒',
-            dismissKey: 'kids_art_android_hint_dismissed',
-          }
-        : {
-            title: 'Install App',
-            body: 'Tap Install to add this art archive to your Android home screen.',
-            close: 'Dismiss hint',
-            dismissKey: 'kids_art_android_hint_dismissed',
-          };
-
-      const actionLabel = currentLang === 'zh' ? '安装' : 'Install';
-      createBanner(copy, actionLabel, async () => {
-        if (!deferredPrompt) return;
-        deferredPrompt.prompt();
-        try {
-          await deferredPrompt.userChoice;
-        } catch {}
-        deferredPrompt = null;
-        activeBanner?.remove();
-        activeBanner = null;
-      });
+      showAndroidBanner();
     });
+
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        if (!deferredPrompt) showAndroidBanner(true);
+      }, 1200);
+    }, { once: true });
   }
 })();
