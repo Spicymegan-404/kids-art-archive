@@ -931,21 +931,21 @@ a.tab-btn { text-decoration: none; display: inline-block; }
 }
 .art-card-top-actions {
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: 6px;
+  right: 8px;
   z-index: 2;
   display: flex;
   align-items: center;
-  gap: .5rem;
+  gap: .25rem;
 }
 .art-card-share {
   position: relative;
   border: none;
-  width: 42px;
-  height: 42px;
-  flex: 0 0 42px;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
   padding: 0;
-  border-radius: 12px;
+  border-radius: 9px;
   background: rgba(255,255,255,.96);
   box-shadow: 0 6px 14px rgba(0,0,0,.08);
   cursor: pointer;
@@ -953,31 +953,31 @@ a.tab-btn { text-decoration: none; display: inline-block; }
 .art-card-share::before {
   content: "";
   position: absolute;
-  left: 11px;
-  right: 11px;
-  bottom: 9px;
-  height: 14px;
-  border: 2.5px solid var(--primary-dark);
+  left: 8px;
+  right: 8px;
+  bottom: 6px;
+  height: 9px;
+  border: 1.8px solid var(--primary-dark);
   border-top: none;
-  border-radius: 0 0 6px 6px;
+  border-radius: 0 0 4px 4px;
 }
 .art-card-share::after {
   content: "";
   position: absolute;
   left: 50%;
-  top: 8px;
-  width: 12px;
-  height: 12px;
-  border-top: 2.5px solid var(--primary-dark);
-  border-right: 2.5px solid var(--primary-dark);
+  top: 5px;
+  width: 8px;
+  height: 8px;
+  border-top: 1.8px solid var(--primary-dark);
+  border-right: 1.8px solid var(--primary-dark);
   transform: translateX(-50%) rotate(-45deg);
 }
 .art-card-share span {
   position: absolute;
   left: 50%;
-  top: 10px;
-  width: 2.5px;
-  height: 14px;
+  top: 7px;
+  width: 1.8px;
+  height: 9px;
   background: var(--primary-dark);
   transform: translateX(-50%);
   border-radius: 99px;
@@ -994,12 +994,12 @@ a.tab-btn { text-decoration: none; display: inline-block; }
   display: inline-flex;
   align-items: center;
   gap: .35rem;
-  height: 42px;
-  padding: 0 .7rem;
-  border-radius: 12px;
+  height: 30px;
+  padding: 0 .45rem;
+  border-radius: 9px;
   background: rgba(255,255,255,.95);
   box-shadow: 0 6px 14px rgba(0,0,0,.08);
-  font-size: .75rem;
+  font-size: .62rem;
   font-weight: 700;
   color: var(--muted);
 }
