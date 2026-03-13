@@ -1325,6 +1325,11 @@ body.year-book-mode .art-card-img {
   background: #fff;
 }
 
+.pdf-export-mode .art-card-top-actions,
+body.year-book-mode .art-card-top-actions {
+  display: none !important;
+}
+
 @media (max-width: 960px) {
   .site-header-inner {
     flex-direction: column;
@@ -1392,6 +1397,7 @@ body.year-book-mode .art-card-img {
 @media print {
   .portfolio-page-head { display: none !important; }
   .portfolio-select-bar { display: none !important; }
+  .art-card-top-actions { display: none !important; }
 
   html,
   body {
