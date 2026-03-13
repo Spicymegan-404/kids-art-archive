@@ -23,6 +23,17 @@ function normalizeAge(value) {
   return String(age);
 }
 
+function buildAgeOptions() {
+  if (!ageInput) return;
+  const currentValue = normalizeAge(ageInput.value);
+  const defaultLabel = currentLang === 'zh' ? '请选择年龄' : 'Select age';
+  ageInput.innerHTML = `<option value="">${defaultLabel}</option>`;
+  for (let age = 1; age <= 100; age += 1) {
+    ageInput.insertAdjacentHTML('beforeend', `<option value="${age}">${age}</option>`);
+  }
+  ageInput.value = currentValue;
+}
+
 function applyLang() {
   document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
   document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -33,6 +44,7 @@ function applyLang() {
     const key = el.dataset.i18nPlaceholder;
     if (LANG[currentLang][key] !== undefined) el.placeholder = LANG[currentLang][key];
   });
+  buildAgeOptions();
   document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.lang === currentLang);
   });
@@ -85,6 +97,7 @@ let saveNoticeTimer = null;
 
 dateInput.value   = new Date().toISOString().slice(0, 10);
 artistInput.value = localStorage.getItem('kids_art_artist') || '';
+buildAgeOptions();
 
 // ── View switching ────────────────────────────────────────────────────────────
 function switchView(view, scrollToYear = null) {
