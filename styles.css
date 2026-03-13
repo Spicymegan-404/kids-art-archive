@@ -122,14 +122,14 @@ header h1 { font-size: clamp(1.6rem, 5vw, 2.4rem); font-weight: 800; letter-spac
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 84px;
-  height: 52px;
+  min-width: 72px;
+  height: 44px;
   background: rgba(255,255,255,.12);
   border: 2px solid rgba(255,255,255,.5);
   color: #fff;
-  padding: 0 1rem;
+  padding: 0 .85rem;
   border-radius: 14px;
-  font-size: .92rem;
+  font-size: .82rem;
   font-weight: 700;
   cursor: pointer;
   transition: background .15s, border-color .15s;
@@ -1304,9 +1304,11 @@ body.year-book-mode .art-card-img {
     padding: 24px 16px 40px;
   }
 
-  .portfolio-page-head {
-    padding: 24px 16px 0;
-  }
+.portfolio-page-head {
+  padding: 24px 16px 0;
+  max-width: 1200px;
+  margin: 0 auto;
+}
 }
 
 @media (max-width: 760px) {
@@ -1743,6 +1745,34 @@ body.year-book-mode .art-card-img {
 }
 
 @media (max-width: 640px) {
+  header {
+    padding: 1.7rem .9rem 1.3rem;
+  }
+
+  header h1 {
+    font-size: clamp(1.25rem, 8vw, 2rem);
+    line-height: 1.15;
+    padding-right: 170px;
+  }
+
+  .subtitle {
+    font-size: .84rem;
+    padding-right: 170px;
+  }
+
+  .lang-switcher {
+    top: .8rem;
+    right: .8rem;
+    gap: .45rem;
+  }
+
+  .lang-btn {
+    min-width: 64px;
+    height: 40px;
+    padding: 0 .7rem;
+    font-size: .74rem;
+  }
+
   .share-container {
     padding: 1.5rem .9rem 3rem;
   }
@@ -1775,6 +1805,14 @@ body.year-book-mode .art-card-img {
 
   .timeline-item-thumb {
     width: 100%;
+  }
+
+  .portfolio-page-head {
+    padding: 18px 12px 0;
+  }
+
+  .portfolio-page .tools-bar {
+    justify-content: center;
   }
 
   .ios-home-hint {

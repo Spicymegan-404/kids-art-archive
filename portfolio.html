@@ -12,24 +12,22 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body class="portfolio-page">
-
-  <div class="site-header">
-    <div class="site-header-inner">
-      <a class="site-brand" href="index.html">🎨 儿童艺术成长档案</a>
-      <nav class="site-nav">
-        <a class="site-nav-link" href="index.html">🏠 首页</a>
-        <a class="site-nav-link active" href="portfolio.html">🖼 作品集</a>
-        <a class="site-nav-link" href="index.html#yearbook-section">📚 年度合集</a>
-        <div class="site-nav-lang">
-          <button class="lang-btn site-nav-lang-btn" data-lang="en" type="button">EN</button>
-          <button class="lang-btn site-nav-lang-btn" data-lang="zh" type="button">中文</button>
-        </div>
-      </nav>
+  <header>
+    <div class="lang-switcher">
+      <button class="lang-btn" data-lang="en" type="button">EN</button>
+      <button class="lang-btn" data-lang="zh" type="button">中文</button>
     </div>
-  </div>
+    <h1 data-i18n="siteTitle">🎨 儿童艺术成长档案</h1>
+    <p class="subtitle" data-i18n="subtitle">记录孩子每一次创作的闪光</p>
+  </header>
+
+  <nav class="tab-nav">
+    <a class="tab-btn" href="index.html" data-i18n="navHome">创作记录</a>
+    <a class="tab-btn" href="index.html#yearbook-section" data-i18n="navYearly">年度合集</a>
+    <a class="tab-btn active" href="portfolio.html" data-i18n="navPortfolio">作品集</a>
+  </nav>
 
   <div class="portfolio-page-head" id="controls">
-    <h1 class="portfolio-page-title">🎨 儿童艺术成长档案</h1>
     <div class="tools-bar">
       <button class="btn-outline" id="btn-yearly-book" data-i18n="btnYearlyArtBook">Generate Yearly Art Book</button>
       <button class="btn-download" id="btn-download" data-i18n="btnDownloadPDF">下载PDF</button>
