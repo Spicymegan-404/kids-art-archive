@@ -8,12 +8,23 @@
 </head>
 <body>
 
-  <header>
-    <div class="lang-switcher">
-      <button class="lang-btn active" data-lang="en">EN</button>
-      <span class="lang-sep">|</span>
-      <button class="lang-btn" data-lang="zh">中文</button>
+  <div class="site-header">
+    <div class="site-header-inner">
+      <a class="site-brand" href="index.html">🎨 儿童艺术成长档案</a>
+      <nav class="site-nav">
+        <a class="site-nav-link" href="index.html">🏠 首页</a>
+        <a class="site-nav-link" href="portfolio.html">🖼 作品集</a>
+        <a class="site-nav-link" href="#yearbook-section">📚 年度画册</a>
+        <a class="site-nav-link active" href="#upload-section">➕ 添加作品</a>
+        <div class="site-nav-lang">
+          <button class="lang-btn site-nav-lang-btn active" data-lang="en" type="button">EN</button>
+          <button class="lang-btn site-nav-lang-btn" data-lang="zh" type="button">中文</button>
+        </div>
+      </nav>
     </div>
+  </div>
+
+  <header>
     <h1 data-i18n="siteTitle">🎨 Kids Art Gallery</h1>
     <p class="subtitle" data-i18n="subtitle">A timeline of wonderful creations</p>
   </header>
@@ -30,7 +41,7 @@
     <!-- ── Home view ── -->
     <div id="view-home">
 
-      <section class="upload-section">
+      <section class="upload-section" id="upload-section">
         <h2 data-i18n="uploadHeading">Add a New Drawing</h2>
         <form id="upload-form">
           <div class="form-group">
@@ -74,6 +85,7 @@
             <img id="image-preview" src="" alt="Preview" />
           </div>
           <button type="submit" class="btn-add" data-i18n="btnAdd">Add to Gallery</button>
+          <div id="save-confirmation" class="save-confirmation hidden" aria-live="polite">已保存 ✓</div>
         </form>
       </section>
 
@@ -89,7 +101,7 @@
 
     <!-- ── Yearly Collection view ── -->
     <div id="view-yearly" class="hidden">
-      <section class="yearly-section-wrapper">
+      <section class="yearly-section-wrapper" id="yearbook-section">
         <h2 data-i18n="yearlyHeading">Yearly Collection</h2>
         <div id="yearly-content"></div>
       </section>

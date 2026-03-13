@@ -4,336 +4,54 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Art Growth Portfolio</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg:      #fdf8f4;
-      --surface: #ffffff;
-      --border:  #e8ddd4;
-      --primary: #f4845f;
-      --text:    #3a2e27;
-      --muted:   #9e8878;
-      --radius:  14px;
-    }
-
-    body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
-
-    /* ── Controls bar (hidden in PDF) ── */
-    .controls {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      background: rgba(253,248,244,.92);
-      backdrop-filter: blur(6px);
-      border-bottom: 1.5px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      padding: .7rem 1.4rem;
-    }
-    .controls-left { display: flex; align-items: center; gap: .9rem; }
-    .controls-right { display: flex; align-items: center; gap: .8rem; }
-
-    .back-link {
-      display: inline-flex;
-      align-items: center;
-      gap: .3rem;
-      font-size: .85rem;
-      color: var(--muted);
-      text-decoration: none;
-      font-weight: 600;
-      transition: color .15s;
-    }
-    .back-link:hover { color: var(--primary); }
-
-    .page-heading {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--text);
-    }
-
-    /* ── Lang switcher ── */
-    .lang-switcher { display: flex; align-items: center; gap: .3rem; }
-    .lang-btn {
-      background: none;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      padding: .22rem .52rem;
-      border-radius: 6px;
-      font-size: .78rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: color .15s;
-    }
-    .lang-btn:hover, .lang-btn.active { color: var(--primary); }
-    .lang-sep { color: var(--border); font-size: .85rem; }
-
-    /* ── Buttons ── */
-    .btn-download {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: .5rem 1.2rem;
-      font-size: .88rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: opacity .15s;
-      white-space: nowrap;
-    }
-    .btn-download:hover    { opacity: .88; }
-    .btn-download:disabled { opacity: .55; cursor: default; }
-
-    .btn-outline {
-      background: none;
-      color: var(--text);
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      padding: .48rem 1rem;
-      font-size: .85rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: border-color .15s, color .15s;
-      white-space: nowrap;
-    }
-    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
-
-    /* ── Main content ── */
-    .container {
-      max-width: 780px;
-      margin: 0 auto;
-      padding: 2rem 1.2rem 5rem;
-    }
-
-    /* ── Empty state ── */
-    .empty-state {
-      text-align: center;
-      padding: 5rem 1rem;
-      color: var(--muted);
-      font-size: .95rem;
-    }
-
-    /* ── Cover page ── */
-    .pdf-cover {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 60vh;
-      padding: 3rem 2rem;
-      margin-bottom: 3rem;
-      text-align: center;
-      border: 2.5px solid var(--border);
-      border-radius: 20px;
-      background: var(--surface);
-      position: relative;
-      page-break-after: always;
-      break-after: page;
-    }
-    .pdf-cover::before,
-    .pdf-cover::after {
-      content: '';
-      position: absolute;
-      inset: 10px;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      pointer-events: none;
-    }
-    .pdf-cover::after {
-      inset: 16px;
-      border-style: dashed;
-      opacity: .45;
-    }
-    .cover-icon {
-      font-size: 3.2rem;
-      margin-bottom: 1.2rem;
-      line-height: 1;
-    }
-    .cover-title {
-      font-size: clamp(1.6rem, 5vw, 2.6rem);
-      font-weight: 900;
-      color: var(--text);
-      line-height: 1.2;
-      margin-bottom: .6rem;
-    }
-    .cover-subtitle {
-      font-size: clamp(.95rem, 2.5vw, 1.15rem);
-      color: var(--muted);
-      margin-bottom: 2.5rem;
-    }
-    .cover-divider {
-      width: 60px;
-      height: 3px;
-      background: var(--primary);
-      border-radius: 2px;
-      margin: 0 auto 2.5rem;
-    }
-    .cover-artist {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: .6rem;
-    }
-    .cover-artist-label {
-      font-size: .78rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      color: var(--muted);
-      margin-bottom: .25rem;
-    }
-    .cover-stats {
-      font-size: .82rem;
-      color: var(--muted);
-      margin-top: 2rem;
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      flex-wrap: wrap;
-    }
-    .cover-stat {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: .15rem;
-    }
-    .cover-stat-value {
-      font-size: 1.1rem;
-      font-weight: 800;
-      color: var(--text);
-    }
-    .cover-stat-label {
-      font-size: .72rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: .05em;
-    }
-
-    /* ── Year section ── */
-    .year-section { margin-bottom: 3rem; }
-    .year-heading {
-      font-size: 1.4rem;
-      font-weight: 800;
-      margin-bottom: 1.2rem;
-      padding-bottom: .5rem;
-      border-bottom: 2px solid var(--border);
-    }
-
-    /* ── Artwork grid ── */
-    .art-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1.4rem;
-    }
-    @media (max-width: 520px) {
-      .art-grid { grid-template-columns: 1fr; }
-    }
-
-    .art-card {
-      background: var(--surface);
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      page-break-inside: avoid;
-      break-inside: avoid;
-    }
-    .art-card-img {
-      width: 100%;
-      aspect-ratio: 4/3;
-      object-fit: cover;
-      display: block;
-      background: var(--bg);
-    }
-    .art-card-body {
-      padding: .9rem 1rem;
-    }
-    .art-card-title {
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: .5rem;
-      line-height: 1.3;
-    }
-    .art-card-meta-row {
-      display: flex;
-      flex-direction: column;
-      gap: .2rem;
-      margin-bottom: .4rem;
-    }
-    .art-card-meta-item {
-      display: flex;
-      align-items: baseline;
-      gap: .35rem;
-      font-size: .8rem;
-    }
-    .art-card-meta-label {
-      color: var(--muted);
-      min-width: 3.2em;
-      flex-shrink: 0;
-    }
-    .art-card-meta-value {
-      color: var(--text);
-      font-weight: 600;
-    }
-    .art-card-story {
-      font-size: .8rem;
-      color: var(--text);
-      line-height: 1.65;
-      white-space: pre-wrap;
-      margin-top: .6rem;
-      padding-top: .6rem;
-      border-top: 1px solid var(--border);
-    }
-
-    /* ── PDF footer ── */
-    .pdf-footer {
-      text-align: center;
-      margin-top: 3rem;
-      font-size: .78rem;
-      color: var(--muted);
-      border-top: 1.5px solid var(--border);
-      padding-top: 1rem;
-    }
-
-    /* ── Print / PDF overrides ── */
-    @media print {
-      .controls { display: none !important; }
-      body { background: #fff; }
-      .art-card { border: 1px solid #ccc; }
-      .pdf-cover { border-color: #ccc; }
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
+<body class="portfolio-page">
 
-  <!-- Controls bar (not included in PDF) -->
-  <div class="controls" id="controls">
-    <div class="controls-left">
-      <a class="back-link" href="index.html">← <span data-i18n="navHome">Home</span></a>
-      <span class="page-heading" data-i18n="portfolioHeading">Art Growth Portfolio</span>
+  <div class="site-header">
+    <div class="site-header-inner">
+      <a class="site-brand" href="index.html">🎨 儿童艺术成长档案</a>
+      <nav class="site-nav">
+        <a class="site-nav-link" href="index.html">🏠 首页</a>
+        <a class="site-nav-link active" href="portfolio.html">🖼 作品集</a>
+        <a class="site-nav-link" href="index.html#yearbook-section">📚 年度合集</a>
+        <div class="site-nav-lang">
+          <button class="lang-btn site-nav-lang-btn" data-lang="en" type="button">EN</button>
+          <button class="lang-btn site-nav-lang-btn" data-lang="zh" type="button">中文</button>
+        </div>
+      </nav>
     </div>
-    <div class="controls-right">
-      <div class="lang-switcher">
-        <button class="lang-btn" data-lang="en">EN</button>
-        <span class="lang-sep">|</span>
-        <button class="lang-btn" data-lang="zh">中文</button>
-      </div>
-      <button class="btn-outline" id="btn-export" data-i18n="btnExport">📦 Export Data</button>
-      <button class="btn-outline" id="btn-import" data-i18n="btnImport">📥 Import Data</button>
-      <button class="btn-download" id="btn-download" data-i18n="btnDownloadPDF">Download PDF</button>
-    </div>
-    <!-- Hidden file input for import -->
-    <input type="file" id="import-file" accept=".json" style="display:none" />
   </div>
 
+  <div class="portfolio-page-head" id="controls">
+    <h1 class="portfolio-page-title">🎨 儿童艺术成长档案</h1>
+    <div class="tools-bar">
+      <button class="btn-outline" id="btn-yearly-book" data-i18n="btnYearlyArtBook">Generate Yearly Art Book</button>
+      <button class="btn-download" id="btn-download" data-i18n="btnDownloadPDF">下载PDF</button>
+    </div>
+  </div>
+  <!-- Hidden file input for import -->
+  <input type="file" id="import-file" accept=".json" style="display:none" />
+
   <!-- PDF content -->
-  <div class="container" id="pdf-root"></div>
+  <div class="container portfolio-container" id="pdf-root"></div>
+
+  <div class="portfolio-lightbox hidden" id="portfolio-lightbox" aria-hidden="true">
+    <button class="portfolio-lightbox-close" id="portfolio-lightbox-close" aria-label="Close">✕</button>
+    <button class="portfolio-lightbox-nav portfolio-lightbox-nav-prev" id="portfolio-lightbox-prev" aria-label="Previous image">‹</button>
+    <div class="portfolio-lightbox-stage" id="portfolio-lightbox-stage">
+      <img class="portfolio-lightbox-image" id="portfolio-lightbox-image" src="" alt="" />
+    </div>
+    <button class="portfolio-lightbox-nav portfolio-lightbox-nav-next" id="portfolio-lightbox-next" aria-label="Next image">›</button>
+  </div>
+
+  <div class="share-modal hidden" id="share-modal" aria-hidden="true">
+    <div class="share-modal-backdrop" id="share-modal-backdrop"></div>
+    <div class="share-modal-card">
+      <button class="share-modal-close" id="share-modal-close" aria-label="Close">✕</button>
+      <div class="share-modal-body" id="share-modal-body"></div>
+    </div>
+  </div>
 
   <script src="lang.js"></script>
   <script>
@@ -351,6 +69,8 @@
       document.querySelectorAll('[data-i18n]').forEach(el => {
         el.textContent = t(el.dataset.i18n);
       });
+      const importBtn = document.getElementById('btn-import');
+      if (importBtn && currentLang === 'zh') importBtn.textContent = '恢复作品备份';
       document.title = t('portfolioHeading');
     }
 
@@ -363,12 +83,14 @@
     });
 
     /* ── Data ── */
+    const selectedArtIds = new Set();
+
     function getDrawings() {
       try { return JSON.parse(localStorage.getItem('kids_art_gallery')) || []; }
       catch { return []; }
     }
 
-    /* ── Date formatting ── */
+    /* ── Helpers ── */
     function formatDate(dateStr) {
       const [y, m, d] = dateStr.split('-').map(Number);
       const locale = currentLang === 'zh' ? 'zh-CN' : 'en-US';
@@ -377,49 +99,62 @@
       });
     }
 
-    /* ── Escape HTML ── */
     function esc(str) {
       return String(str)
         .replace(/&/g, '&amp;').replace(/</g, '&lt;')
         .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
-    /* ── Render ── */
-    function render() {
-      applyLangBtns();
+    function getArtworkImages(drawing) {
+      const candidates = [];
+      if (Array.isArray(drawing.imageUrls)) candidates.push(...drawing.imageUrls);
+      if (Array.isArray(drawing.images)) candidates.push(...drawing.images);
+      if (drawing.imageUrl) candidates.push(drawing.imageUrl);
+      return candidates
+        .filter((src, index, list) => typeof src === 'string' && src && list.indexOf(src) === index)
+        .slice(0, 4);
+    }
 
-      const root = document.getElementById('pdf-root');
-      const drawings = getDrawings();
+    function getYears(drawings) {
+      return [...new Set(drawings.map(d => d.date.slice(0, 4)))].sort((a, b) => b - a);
+    }
 
-      if (drawings.length === 0) {
-        root.innerHTML = `<div class="empty-state">${esc(t('portfolioEmpty'))}</div>`;
-        return;
+    function getDrawingById(id) {
+      return getDrawings().find(d => d.id === id) || null;
+    }
+
+    function renderImageGrid(images, title) {
+      return `
+        <div class="art-card-gallery">
+          ${images.map((src, index) => `
+            <button class="art-card-image-btn" type="button" data-lightbox-src="${esc(src)}" data-lightbox-index="${index}">
+              <img class="art-card-img" src="${esc(src)}" alt="${esc(title)} ${index + 1}" />
+            </button>
+          `).join('')}
+        </div>`;
+    }
+
+    function buildCover(artistName, total, years, today, yearFilter = null) {
+      if (yearFilter) {
+        return `
+          <div class="pdf-cover yearly-cover">
+            <div class="yearly-cover-archive">${esc(t('siteTitle').replace(/^🎨\s*/, ''))}</div>
+            <div class="yearly-cover-year">${esc(yearFilter)}</div>
+            <div class="yearly-cover-title">${esc(t('yearlyArtBookTitle'))}</div>
+            <div class="cover-divider"></div>
+            ${artistName ? `<div class="yearly-cover-meta">${esc(t('labelArtist'))}: ${esc(artistName)}</div>` : ''}
+            <div class="yearly-cover-meta">${esc(currentLang === 'zh' ? '作品总数' : 'Total artworks')}: ${total}</div>
+            <div class="cover-stats cover-generated-on">
+              <span>${esc(t('pdfGeneratedOn'))} ${today}</span>
+            </div>
+          </div>`;
       }
 
-      // Artist name from localStorage
-      const artistName = localStorage.getItem('kids_art_artist') || '';
-
-      // Group by year, newest first
-      const byYear = {};
-      drawings.forEach(d => {
-        const y = d.date.slice(0, 4);
-        if (!byYear[y]) byYear[y] = [];
-        byYear[y].push(d);
-      });
-      const years = Object.keys(byYear).sort((a, b) => b - a);
-      const total = drawings.length;
-
-      const today = new Date().toLocaleDateString(
-        currentLang === 'zh' ? 'zh-CN' : 'en-US',
-        { year: 'numeric', month: 'long', day: 'numeric' }
-      );
-
-      // ── Cover page ──
       const artistRowHtml = artistName ? `
         <div class="cover-artist-label">${esc(t('labelArtist'))}</div>
         <div class="cover-artist">${esc(artistName)}</div>` : '';
 
-      let html = `
+      return `
         <div class="pdf-cover">
           <div class="cover-icon">🎨</div>
           <div class="cover-title">${esc(t('siteTitle').replace(/^🎨\s*/, ''))}</div>
@@ -436,14 +171,63 @@
               <span class="cover-stat-label">${currentLang === 'zh' ? '年' : 'years'}</span>
             </div>
           </div>
-          <div class="cover-stats" style="margin-top:.8rem;">
+          <div class="cover-stats cover-generated-on">
             <span>${esc(t('pdfGeneratedOn'))} ${today}</span>
           </div>
         </div>`;
+    }
 
-      // ── Year sections ──
+    /* ── Render ── */
+    function render(options = {}) {
+      applyLangBtns();
+
+      const root = document.getElementById('pdf-root');
+      const yearFilter = options.yearFilter || null;
+      const pdfMode = Boolean(options.pdfMode);
+      const allDrawings = getDrawings();
+      const selectedDrawings = allDrawings.filter(d => selectedArtIds.has(d.id));
+      const drawings = yearFilter
+        ? allDrawings.filter(d => d.date.slice(0, 4) === yearFilter)
+        : (pdfMode && selectedDrawings.length ? selectedDrawings : allDrawings);
+
+      document.body.classList.toggle('pdf-export-mode', pdfMode);
+      document.body.classList.toggle('year-book-mode', Boolean(yearFilter));
+
+      if (drawings.length === 0) {
+        root.innerHTML = `<div class="empty-state">${esc(yearFilter ? t('yearlyArtBookEmpty') : t('portfolioEmpty'))}</div>`;
+        return;
+      }
+
+      const artistName = localStorage.getItem('kids_art_artist') || '';
+      const byYear = {};
+      drawings.forEach(d => {
+        const y = d.date.slice(0, 4);
+        if (!byYear[y]) byYear[y] = [];
+        byYear[y].push(d);
+      });
+
+      const years = getYears(drawings);
+      const total = drawings.length;
+      const today = new Date().toLocaleDateString(
+        currentLang === 'zh' ? 'zh-CN' : 'en-US',
+        { year: 'numeric', month: 'long', day: 'numeric' }
+      );
+
+      let html = buildCover(artistName, total, years, today, yearFilter);
+      if (!pdfMode) {
+        html += `
+          <div class="portfolio-select-bar">
+            <button type="button" class="btn-outline" data-select-action="all">全选</button>
+            <button type="button" class="btn-outline" data-select-action="none">取消全选</button>
+          </div>`;
+      }
+
       years.forEach(year => {
-        const items = byYear[year].slice().sort((a, b) => b.date.localeCompare(a.date));
+        const items = byYear[year].slice().sort((a, b) => {
+          const dateSort = yearFilter ? a.date.localeCompare(b.date) : b.date.localeCompare(a.date);
+          if (dateSort !== 0) return dateSort;
+          return yearFilter ? a.id - b.id : b.id - a.id;
+        });
         html += `<div class="year-section"><div class="year-heading">${esc(year)}</div><div class="art-grid">`;
 
         items.forEach(d => {
@@ -464,19 +248,25 @@
               <span class="art-card-meta-value">${esc(formatDate(d.date))}</span>
             </div>`);
 
-          const storyHtml = d.story
-            ? `<div class="art-card-story">${esc(d.story)}</div>`
-            : '';
+          const storyHtml = d.story ? `<div class="art-card-story">${esc(d.story)}</div>` : '';
+          const images = getArtworkImages(d);
 
           html += `
-            <div class="art-card">
-              <img class="art-card-img" src="${d.imageUrl}" alt="${esc(d.title)}" />
+            <article class="art-card" data-art-id="${d.id}">
+              <div class="art-card-top-actions">
+                <button type="button" class="art-card-share" data-share-id="${d.id}" aria-label="Share"><span aria-hidden="true"></span></button>
+                <label class="art-card-select">
+                  <input type="checkbox" class="art-select" data-art-id="${d.id}" ${selectedArtIds.has(d.id) ? 'checked' : ''} />
+                  <span>PDF</span>
+                </label>
+              </div>
+              ${renderImageGrid(images, d.title)}
               <div class="art-card-body">
                 <div class="art-card-title">${esc(d.title)}</div>
                 <div class="art-card-meta-row">${metaRows.join('')}</div>
                 ${storyHtml}
               </div>
-            </div>`;
+            </article>`;
         });
 
         html += `</div></div>`;
@@ -486,58 +276,239 @@
       root.innerHTML = html;
     }
 
-    /* ── Export ── */
-    document.getElementById('btn-export').addEventListener('click', () => {
-      const artworks = getDrawings();
-      const payload = {
-        app:          'Kids Art Archive',
-        version:      '1.0',
-        exportDate:   new Date().toISOString().slice(0, 10),
-        artworkCount: artworks.length,
-        artworks,
-      };
-      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-      const url  = URL.createObjectURL(blob);
-      const a    = document.createElement('a');
-      a.href     = url;
-      a.download = 'kids-art-backup.json';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    });
+    /* ── Lightbox ── */
+    const portfolioLightbox = document.getElementById('portfolio-lightbox');
+    const portfolioLightboxImage = document.getElementById('portfolio-lightbox-image');
+    const portfolioLightboxStage = document.getElementById('portfolio-lightbox-stage');
+    const shareModal = document.getElementById('share-modal');
+    const shareModalBody = document.getElementById('share-modal-body');
+    let lightboxImages = [];
+    let lightboxIndex = 0;
 
-    /* ── Import ── */
-    document.getElementById('btn-import').addEventListener('click', () => {
-      document.getElementById('import-file').value = '';
-      document.getElementById('import-file').click();
-    });
+    function syncLightboxImage() {
+      const src = lightboxImages[lightboxIndex];
+      if (!src) return;
+      portfolioLightboxImage.src = src;
+      portfolioLightboxImage.alt = `Artwork image ${lightboxIndex + 1}`;
+    }
 
-    document.getElementById('import-file').addEventListener('change', (ev) => {
-      const file = ev.target.files[0];
-      if (!file) return;
+    function openLightbox(images, index) {
+      lightboxImages = images;
+      lightboxIndex = index;
+      syncLightboxImage();
+      portfolioLightbox.classList.remove('hidden');
+      portfolioLightbox.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
 
-      const existing = getDrawings();
-      if (existing.length > 0 && !window.confirm(t('importConfirm'))) return;
+    function closeLightbox() {
+      portfolioLightbox.classList.add('hidden');
+      portfolioLightbox.setAttribute('aria-hidden', 'true');
+      portfolioLightboxImage.src = '';
+      document.body.style.overflow = '';
+    }
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const data = JSON.parse(e.target.result);
-          if (!Array.isArray(data.artworks)) throw new Error('invalid');
-          localStorage.setItem('kids_art_gallery', JSON.stringify(data.artworks));
-          alert(t('importSuccess'));
-          location.reload();
-        } catch {
-          alert(t('importError'));
+    function moveLightbox(direction) {
+      if (!lightboxImages.length) return;
+      lightboxIndex = (lightboxIndex + direction + lightboxImages.length) % lightboxImages.length;
+      syncLightboxImage();
+    }
+
+    function openShareModal(drawing, anchorCard) {
+      if (!drawing) return;
+      const images = getArtworkImages(drawing);
+      const cover = images[0] || '';
+      const meta = [];
+      if (drawing.artist) meta.push(`<div class="share-meta-item">🎨 <strong>${esc(drawing.artist)}</strong></div>`);
+      if (drawing.age) meta.push(`<div class="share-meta-item">🌱 <strong>${esc(drawing.age)}</strong></div>`);
+      meta.push(`<div class="share-meta-item">📅 <strong>${esc(formatDate(drawing.date))}</strong></div>`);
+
+      shareModalBody.innerHTML = `
+        <article class="share-card share-card-modal share-float-card">
+          <div class="share-modal-actions">
+            <button type="button" class="share-send-btn" id="share-send-btn" aria-label="Send"><span aria-hidden="true"></span></button>
+          </div>
+          <div class="share-float-media">
+            <img src="${esc(cover)}" alt="${esc(drawing.title)}" />
+          </div>
+          <h1 class="share-title">${esc(drawing.title)}</h1>
+          <div class="share-meta">${meta.join('')}</div>
+          ${drawing.story ? `<div class="share-story">${esc(drawing.story)}</div>` : ''}
+        </article>`;
+
+      shareModal.classList.remove('hidden');
+      shareModal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+
+      if (anchorCard) {
+        const rect = anchorCard.getBoundingClientRect();
+        const modalCard = shareModal.querySelector('.share-modal-card');
+        modalCard.style.width = `${rect.width}px`;
+        const maxLeft = window.innerWidth - rect.width - 16;
+        const left = Math.max(16, Math.min(rect.left, maxLeft));
+        const popupHeight = modalCard.offsetHeight;
+        const preferredTop = rect.top - popupHeight - 12;
+        const fallbackTop = Math.min(window.innerHeight - popupHeight - 16, rect.bottom + 12);
+        const top = preferredTop >= 16 ? preferredTop : Math.max(16, fallbackTop);
+        modalCard.style.left = `${left}px`;
+        modalCard.style.top = `${top}px`;
+      }
+
+      document.getElementById('share-send-btn')?.addEventListener('click', () => {
+        const shareUrl = new URL(`share.html?id=${drawing.id}`, window.location.href).toString();
+        if (navigator.share) {
+          navigator.share({ title: drawing.title, url: shareUrl }).catch(() => {});
+          return;
         }
-      };
-      reader.readAsText(file);
+        if (navigator.clipboard?.writeText) {
+          navigator.clipboard.writeText(shareUrl).catch(() => {});
+        }
+      });
+    }
+
+    function closeShareModal() {
+      shareModal.classList.add('hidden');
+      shareModal.setAttribute('aria-hidden', 'true');
+      shareModalBody.innerHTML = '';
+      const modalCard = shareModal.querySelector('.share-modal-card');
+      modalCard.style.width = '';
+      modalCard.style.left = '';
+      modalCard.style.top = '';
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('pdf-root').addEventListener('click', (event) => {
+      const selectAction = event.target.closest('[data-select-action]');
+      if (selectAction) {
+        const action = selectAction.dataset.selectAction;
+        const drawings = getDrawings();
+        selectedArtIds.clear();
+        if (action === 'all') drawings.forEach(d => selectedArtIds.add(d.id));
+        render();
+        return;
+      }
+
+      const shareButton = event.target.closest('.art-card-share');
+      if (shareButton) {
+        event.stopPropagation();
+        const shareId = Number(shareButton.dataset.shareId);
+        openShareModal(getDrawingById(shareId), shareButton.closest('.art-card'));
+        return;
+      }
+
+      const selectWrap = event.target.closest('.art-card-select');
+      if (selectWrap) {
+        event.stopPropagation();
+        return;
+      }
+
+      const button = event.target.closest('.art-card-image-btn');
+      if (button && !document.body.classList.contains('pdf-export-mode')) {
+        const card = button.closest('.art-card');
+        const images = [...card.querySelectorAll('.art-card-image-btn')].map(el => el.dataset.lightboxSrc);
+        openLightbox(images, Number(button.dataset.lightboxIndex) || 0);
+        return;
+      }
+
+      const card = event.target.closest('.art-card');
+      if (!card || document.body.classList.contains('pdf-export-mode')) return;
+      const artId = card.dataset.artId;
+      if (artId) window.location.href = `art.html?id=${artId}`;
     });
 
-    /* ── PDF download ── */
-    document.getElementById('btn-download').addEventListener('click', async () => {
-      const btn = document.getElementById('btn-download');
+    document.getElementById('pdf-root').addEventListener('change', (event) => {
+      const checkbox = event.target.closest('.art-select');
+      if (!checkbox) return;
+      const artId = Number(checkbox.dataset.artId);
+      if (!artId) return;
+      if (checkbox.checked) selectedArtIds.add(artId);
+      else selectedArtIds.delete(artId);
+    });
+
+    document.getElementById('portfolio-lightbox-close').addEventListener('click', closeLightbox);
+    document.getElementById('portfolio-lightbox-prev').addEventListener('click', () => moveLightbox(-1));
+    document.getElementById('portfolio-lightbox-next').addEventListener('click', () => moveLightbox(1));
+    document.getElementById('share-modal-close').addEventListener('click', closeShareModal);
+    document.getElementById('share-modal-backdrop').addEventListener('click', closeShareModal);
+
+    portfolioLightbox.addEventListener('click', (event) => {
+      if (event.target === portfolioLightbox) closeLightbox();
+    });
+
+    portfolioLightboxStage.addEventListener('click', (event) => {
+      const rect = portfolioLightboxStage.getBoundingClientRect();
+      moveLightbox(event.clientX < rect.left + rect.width / 2 ? -1 : 1);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (!shareModal.classList.contains('hidden') && event.key === 'Escape') {
+        closeShareModal();
+        return;
+      }
+      if (portfolioLightbox.classList.contains('hidden')) return;
+      if (event.key === 'Escape') closeLightbox();
+      if (event.key === 'ArrowLeft') moveLightbox(-1);
+      if (event.key === 'ArrowRight') moveLightbox(1);
+    });
+
+    /* ── Export / Import ── */
+    const btnExport = document.getElementById('btn-export');
+    if (btnExport) {
+      btnExport.addEventListener('click', () => {
+        const artworks = getDrawings();
+        const payload = {
+          app:          'Kids Art Archive',
+          version:      '1.0',
+          exportDate:   new Date().toISOString().slice(0, 10),
+          artworkCount: artworks.length,
+          artworks,
+        };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href     = url;
+        a.download = 'kids-art-backup.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+    }
+
+    const btnImport = document.getElementById('btn-import');
+    const importFile = document.getElementById('import-file');
+    if (btnImport && importFile) {
+      btnImport.addEventListener('click', () => {
+        importFile.value = '';
+        importFile.click();
+      });
+
+      importFile.addEventListener('change', (ev) => {
+        const file = ev.target.files[0];
+        if (!file) return;
+
+        const existing = getDrawings();
+        if (existing.length > 0 && !window.confirm(t('importConfirm'))) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const data = JSON.parse(e.target.result);
+            if (!Array.isArray(data.artworks)) throw new Error('invalid');
+            localStorage.setItem('kids_art_gallery', JSON.stringify(data.artworks));
+            alert(t('importSuccess'));
+            location.reload();
+          } catch {
+            alert(t('importError'));
+          }
+        };
+        reader.readAsText(file);
+      });
+    }
+
+    async function downloadPdf(options = {}) {
+      const btn = options.button || document.getElementById('btn-download');
+      const originalText = btn.textContent;
       btn.disabled = true;
       btn.textContent = t('pdfGenerating');
 
@@ -551,26 +522,48 @@
         });
       }
 
+      render({ pdfMode: true, yearFilter: options.yearFilter || null });
       const element = document.getElementById('pdf-root');
-      const filename = `${t('portfolioCover')}.pdf`;
+      const filename = options.yearFilter
+        ? `${options.yearFilter} ${t('yearlyArtBookTitle')}.pdf`
+        : `${t('portfolioCover')}.pdf`;
 
       const opt = {
         margin:      [10, 12, 10, 12],
         filename:    filename,
-        image:       { type: 'jpeg', quality: 0.92 },
-        html2canvas: { scale: 2, useCORS: true, logging: false },
+        image:       { type: 'jpeg', quality: 0.95 },
+        html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
         jsPDF:       { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak:   { mode: ['avoid-all', 'css', 'legacy'] },
+        pagebreak:   { mode: ['css', 'legacy'] },
       };
 
       try {
         await html2pdf().set(opt).from(element).save();
       } catch (e) {
         console.error(e);
+      } finally {
+        render();
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
+    }
+
+    document.getElementById('btn-download').addEventListener('click', () => downloadPdf());
+    document.getElementById('btn-yearly-book').addEventListener('click', () => {
+      const years = getYears(getDrawings());
+      if (!years.length) {
+        alert(t('yearlyArtBookEmpty'));
+        return;
       }
 
-      btn.disabled = false;
-      btn.textContent = t('btnDownloadPDF');
+      const value = window.prompt(`${t('yearlyArtBookPrompt')}: ${years.join(', ')}`, years[0]);
+      if (value === null) return;
+      const year = value.trim();
+      if (!years.includes(year)) {
+        alert(t('yearlyArtBookInvalid'));
+        return;
+      }
+      downloadPdf({ yearFilter: year, button: document.getElementById('btn-yearly-book') });
     });
 
     /* ── Init ── */

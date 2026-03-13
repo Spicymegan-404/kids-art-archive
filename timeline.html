@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Timeline</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="timeline-page">
+  <div class="site-header">
+    <div class="site-header-inner">
+      <a class="site-brand" href="index.html">🎨 儿童艺术成长档案</a>
+      <nav class="site-nav">
+        <a class="site-nav-link" href="index.html">🏠 首页</a>
+        <a class="site-nav-link" href="portfolio.html">🖼 作品集</a>
+        <a class="site-nav-link" href="index.html#yearbook-section">📚 年度画册</a>
+        <a class="site-nav-link" href="index.html#upload-section">➕ 添加作品</a>
+      </nav>
+    </div>
+  </div>
+
+  <main class="timeline" id="timeline-app"></main>
+
+  <script src="lang.js"></script>
+  <script>
+    'use strict';
+
+    let currentLang = localStorage.getItem('kids_art_lang') || 'en';
+    function t(key) { return (LANG[currentLang] || LANG.en)[key] || LANG.en[key] || key; }
+
+    function esc(str) {
+      return String(str)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function formatDate(dateStr) {
+      const [y, m, d] = dateStr.split('-').map(Number);
+      const locale = currentLang === 'zh' ? 'zh-CN' : 'en-US';
+      return new Date(y, m - 1, d).toLocaleDateString(locale, {
+        year: 'numeric', month: 'long', day: 'numeric',
+      });
+    }
+
+    function getDrawings() {
+      try { return JSON.parse(localStorage.getItem('kids_art_gallery')) || []; }
+      catch { return []; }
+    }
+
+    function render() {
+      const root = document.getElementById('timeline-app');
+      const drawings = getDrawings().slice().sort((a, b) => a.date.localeCompare(b.date) || a.id - b.id);
+
+      if (!drawings.length) {
+        root.innerHTML = `<div class="timeline-empty">${esc(t('portfolioEmpty'))}</div>`;
+        return;
+      }
+
+      const groups = {};
+      drawings.forEach(d => {
+        const [year, month] = d.date.split('-');
+        const key = `${year}-${month}`;
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(d);
+      });
+
+      root.innerHTML = Object.keys(groups).sort().map(key => {
+        const [year, month] = key.split('-');
+        const monthLabel = new Date(Number(year), Number(month) - 1, 1).toLocaleDateString(
+          currentLang === 'zh' ? 'zh-CN' : 'en-US',
+          { year: 'numeric', month: 'long' }
+        );
+
+        return `
+          <section class="timeline-group">
+            <h2 class="timeline-group-title">${esc(monthLabel)}</h2>
+            ${groups[key].map(d => `
+              <div class="timeline-item">
+                <div class="timeline-item-date">${esc(formatDate(d.date))}</div>
+                <a class="timeline-item-card" href="art.html?id=${d.id}">
+                  <img class="timeline-item-thumb" src="${esc(d.imageUrl)}" alt="${esc(d.title)}" />
+                  <div>
+                    <div class="timeline-item-title">${esc(d.title)}</div>
+                    <div class="card-date">${d.artist ? `🎨 ${esc(d.artist)}` : ''}</div>
+                  </div>
+                </a>
+              </div>
+            `).join('')}
+          </section>`;
+      }).join('');
+    }
+
+    render();
+  </script>
+</body>
+</html>

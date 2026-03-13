@@ -6,7 +6,7 @@
   <title>Artwork</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body class="detail-page">
+<body class="share-page">
   <div class="site-header">
     <div class="site-header-inner">
       <a class="site-brand" href="index.html">🎨 儿童艺术成长档案</a>
@@ -18,8 +18,7 @@
       </nav>
     </div>
   </div>
-
-  <main class="detail-container" id="detail-app"></main>
+  <div class="share-container" id="share-app"></div>
 
   <script src="lang.js"></script>
   <script>
@@ -52,46 +51,50 @@
       if (Array.isArray(drawing.imageUrls)) candidates.push(...drawing.imageUrls);
       if (Array.isArray(drawing.images)) candidates.push(...drawing.images);
       if (drawing.imageUrl) candidates.push(drawing.imageUrl);
-      return candidates.filter((src, index, list) => typeof src === 'string' && src && list.indexOf(src) === index);
+      return candidates
+        .filter((src, index, list) => typeof src === 'string' && src && list.indexOf(src) === index)
+        .slice(0, 4);
     }
 
     function getCurrentArtwork() {
       const id = Number(new URLSearchParams(location.search).get('id'));
+      if (!id) return null;
       return getDrawings().find(d => d.id === id) || null;
     }
 
     function render() {
-      const app = document.getElementById('detail-app');
+      const app = document.getElementById('share-app');
       const artwork = getCurrentArtwork();
 
       if (!artwork) {
         document.title = t('shareNotFound');
         app.innerHTML = `
-          <div class="timeline-empty">
+          <div class="share-empty">
             <h1>${esc(t('shareNotFound'))}</h1>
-            <p><a class="back-link" href="portfolio.html">← ${esc(t('navPortfolio'))}</a></p>
+            <p><a class="back-link" href="portfolio.html">${esc(t('btnBackPortfolio'))}</a></p>
           </div>`;
         return;
       }
 
       const images = getArtworkImages(artwork);
-      const hero = images[0] || '';
       document.title = `${artwork.title} · ${t('sharePageTitle')}`;
 
       const meta = [];
-      if (artwork.artist) meta.push(`<span class="detail-meta-item">🎨 <strong>${esc(artwork.artist)}</strong></span>`);
-      if (artwork.age) meta.push(`<span class="detail-meta-item">🌱 <strong>${esc(artwork.age)}</strong></span>`);
-      meta.push(`<span class="detail-meta-item">📅 <strong>${esc(formatDate(artwork.date))}</strong></span>`);
+      if (artwork.artist) meta.push(`<div class="share-meta-item">🎨 <strong>${esc(artwork.artist)}</strong></div>`);
+      if (artwork.age) meta.push(`<div class="share-meta-item">🌱 <strong>${esc(artwork.age)}</strong></div>`);
+      meta.push(`<div class="share-meta-item">📅 <strong>${esc(formatDate(artwork.date))}</strong></div>`);
 
       app.innerHTML = `
-        <a class="back-link" href="portfolio.html">← ${esc(t('navPortfolio'))}</a>
-        <article class="detail-shell">
-          <div class="detail-image-wrap">
-            <img src="${esc(hero)}" alt="${esc(artwork.title)}" />
+        <div class="share-header">
+          <a class="back-link" href="portfolio.html">← ${esc(t('btnBackPortfolio'))}</a>
+        </div>
+        <article class="share-card">
+          <div class="share-gallery">
+            ${images.map((src, index) => `<img src="${esc(src)}" alt="${esc(artwork.title)} ${index + 1}" />`).join('')}
           </div>
-          <h1 class="detail-title">${esc(artwork.title)}</h1>
-          <div class="detail-meta">${meta.join('')}</div>
-          ${artwork.story ? `<div class="detail-story">${esc(artwork.story)}</div>` : ''}
+          <h1 class="share-title">${esc(artwork.title)}</h1>
+          <div class="share-meta">${meta.join('')}</div>
+          ${artwork.story ? `<div class="share-story">${esc(artwork.story)}</div>` : ''}
         </article>`;
     }
 

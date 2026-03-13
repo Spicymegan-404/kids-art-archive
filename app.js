@@ -23,7 +23,10 @@ function applyLang() {
   document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.lang === currentLang);
   });
+  const importBtn = document.getElementById('btn-import');
+  if (importBtn && currentLang === 'zh') importBtn.textContent = '恢复作品备份';
   if (!selectedFile) fileLabelTxt.textContent = t('dropZone');
+  if (saveNotice) saveNotice.textContent = currentLang === 'zh' ? '已保存 ✓' : 'Saved ✓';
   renderGallery();
   if (currentView === 'yearly') renderYearly();
 }
@@ -56,6 +59,7 @@ const dropZone     = document.getElementById('drop-zone');
 const fileLabelTxt = document.getElementById('file-label-text');
 const previewWrap  = document.getElementById('image-preview-wrap');
 const previewImg   = document.getElementById('image-preview');
+const saveNotice   = document.getElementById('save-confirmation');
 const gallery      = document.getElementById('gallery');
 const emptyState   = document.getElementById('empty-state');
 const lightbox     = document.getElementById('lightbox');
@@ -64,6 +68,7 @@ const lbTitle      = document.getElementById('lightbox-title');
 const lbArtist     = document.getElementById('lightbox-artist');
 const lbDate       = document.getElementById('lightbox-date');
 const lbStory      = document.getElementById('lightbox-story');
+let saveNoticeTimer = null;
 
 dateInput.value   = new Date().toISOString().slice(0, 10);
 artistInput.value = localStorage.getItem('kids_art_artist') || '';
@@ -86,9 +91,29 @@ function switchView(view, scrollToYear = null) {
     }
   }
 }
+
+function handleRouteHash() {
+  const hash = window.location.hash;
+
+  if (hash === '#yearbook-section') {
+    switchView('yearly');
+    requestAnimationFrame(() => {
+      document.getElementById('yearbook-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    return;
+  }
+
+  if (hash === '#upload-section') {
+    switchView('home');
+    requestAnimationFrame(() => {
+      document.getElementById('upload-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+}
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => switchView(btn.dataset.view));
 });
+window.addEventListener('hashchange', handleRouteHash);
 
 // ── Language switcher ─────────────────────────────────────────────────────────
 document.querySelectorAll('.lang-btn').forEach(btn => {
@@ -146,6 +171,7 @@ form.addEventListener('submit', e => {
     saveDrawings(drawings);
     renderGallery();
     resetForm();
+    showSaveConfirmation();
   };
   reader.readAsDataURL(selectedFile);
 });
@@ -158,6 +184,16 @@ function resetForm() {
   fileLabelTxt.textContent = t('dropZone');
   previewWrap.classList.add('hidden');
   previewImg.src = '';
+}
+
+function showSaveConfirmation() {
+  if (!saveNotice) return;
+  saveNotice.textContent = currentLang === 'zh' ? '已保存 ✓' : 'Saved ✓';
+  saveNotice.classList.remove('hidden');
+  clearTimeout(saveNoticeTimer);
+  saveNoticeTimer = setTimeout(() => {
+    saveNotice.classList.add('hidden');
+  }, 2000);
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -205,9 +241,6 @@ function renderGallery() {
           ${d.story ? `<div class="card-story">${escHtml(d.story)}</div>` : ''}
         </div>
         <div class="card-actions">
-          <button class="btn-share" data-id="${d.id}"
-            title="${t('btnShare')}"
-            aria-label="${t('btnShare')}">↗</button>
           <button class="btn-delete" data-id="${d.id}"
             title="${t('deleteTitle')}"
             aria-label="${t('deleteLabel')}">🗑</button>
@@ -215,12 +248,8 @@ function renderGallery() {
       </div>`;
 
     card.querySelector('.card-inner').addEventListener('click', ev => {
-      if (ev.target.closest('.btn-delete') || ev.target.closest('.btn-share')) return;
+      if (ev.target.closest('.btn-delete')) return;
       openLightbox(d);
-    });
-    card.querySelector('.btn-share').addEventListener('click', ev => {
-      ev.stopPropagation();
-      window.open(`art.html?id=${d.id}`, '_blank');
     });
     card.querySelector('.btn-delete').addEventListener('click', ev => {
       ev.stopPropagation();
@@ -284,7 +313,9 @@ function renderYearly() {
           ${d.age ? `<div class="year-thumb-age">🌱 ${escHtml(d.age)}</div>` : ''}
           <div class="year-thumb-date">📅 ${formatDate(d.date)}</div>
         </div>`;
-      card.addEventListener('click', () => openLightbox(d));
+      card.addEventListener('click', () => {
+        window.location.href = `art.html?id=${d.id}`;
+      });
       grid.appendChild(card);
     });
     group.appendChild(grid);
@@ -503,3 +534,4 @@ async function callClaude(apiKey, userPrompt) {
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 applyLang();
+handleRouteHash();
