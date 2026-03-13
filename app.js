@@ -5,6 +5,10 @@ let currentLang = localStorage.getItem('kids_art_lang') || 'en';
 
 function t(key) { return LANG[currentLang][key]; }
 
+function datePrefix() {
+  return currentLang === 'zh' ? '日期' : 'Date';
+}
+
 function fmtCount(n) {
   if (currentLang === 'zh') return `${n} 幅作品`;
   return n === 1 ? '1 drawing' : `${n} drawings`;
